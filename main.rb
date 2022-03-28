@@ -11,7 +11,7 @@ class Machine
   end
 
   def display_money_inserted_by_user
-    puts "Pieniądze w maszynie #{Coins.currency(@money_inserted)}"
+    puts "Sum in the machine #{Coins.currency(@money_inserted)}"
   end
 
   def remove_coin_from_the_machine(value)
@@ -40,7 +40,7 @@ class Machine
   end
 
   def display_money_in_the_machine
-    puts 'Maszyna przechowuje monety:'
+    puts 'Coins in the machine:'
     @money_in_machine.each do |value, quantity|
       puts Coins.to_s(value, quantity)
     end
@@ -55,21 +55,19 @@ class Machine
 
   def help
     puts 'Menu:'
-    puts '  pomoc - pokazuje menu programu'
-    puts '  exit/quit/close/zakoncz - konczy dzialanie programu'
-    puts '  A - pokazuje liste produktow w maszynie'
-    puts '  B - pokazuje stan monet znajdujacych sie w maszynie'
-    puts '  C - pokazuje ile pieniedzy juz wrzucono'
-    puts '  D - zwraca wrzucone pieniadze'
-    puts '  1gr - wrzuc 1 grosz'
-    puts '  2gr - wrzuc 2 grosze'
-    puts '  5gr - wrzuc 5 groszy'
-    puts '  10gr - wrzuc 10 groszy'
-    puts '  20gr - wrzuc 20 groszy'
-    puts '  50gr - wrzuc 50 groszy'
-    puts '  1zl - wrzuc 1 zloty'
-    puts '  2zl - wrzuc 2 zlote'
-    puts '  Aby kupic dany produkt wrzuc wystarczajaca liczbe pieniedzy i wybierz numer z listy odpowidajacy danemu produktowi'
+    puts '  help - shows main menu'
+    puts '  exit/quit/close/ - quits program'
+    puts '  A - show snacks in the machine'
+    puts '  B - shows what and how many coins are in the machine'
+    puts '  C - shows how much money you already put in the machine '
+    puts '  D - return all put in money'
+    puts '  1c - puts in 1 cents'
+    puts '  5c - puts in 5 cent'
+    puts '  10c - puts in 10 cents'
+    puts '  25c - puts in 25 cents'
+    puts '  1$ - puts in 1 dollar'
+    puts '  5$ - puts in 5 dollars'
+    puts '  To buy a snack insert enough coins into the vending machine and enter number reprezenting chosen snack'
   end
 
     
@@ -81,7 +79,7 @@ class Machine
 
   def cr
     change = make_change
-    puts "Zwrocone pieniadze:"
+    puts "Your change:"
     if change
       change.each do |value|
         puts Coins.code(value)
@@ -89,7 +87,7 @@ class Machine
       end
       @money_inserted = 0
     else
-      puts "Nie mozna zwrocic pieniedzy poniewaz wczesniej zadnych nie dodano"
+      puts "No coins to return"
     end
     change
   end
@@ -116,43 +114,43 @@ class Machine
       if excess >= 0
         @money_inserted -= item.price
         if excess == 0 || cr
-          puts "Kupiony produkt: "+item.name
+          puts "Bought snack: "+item.name
           item.supply -= 1
           @items_list.delete(selector) if item.supply == 0
           # puts selector
         else
-          puts "Nie mozna bylo wydac reszty, brak wystarczajacej liczby monet w automacie"
+          puts "Could not give vhnage. Not enough coins!"
         end
       else
-        puts "Wrzuc dodatkowe #{Coins.currency(-excess)} aby dokonac zakupu"
+        puts "insert additional #{Coins.currency(-excess)} to buy an item"
       end
     else
-      puts 'Produkt wyprzedany'
+      puts 'Item soldout'
     end
   end
   def process_commands
-    puts 'Podaj komende np. "pomoc".'
+    puts 'Enter command eg. "help".'
     loop do
       print '> '
       cmd = gets.chomp
       
-      if ['exit', 'quit','zakoncz','close'].include?(cmd)
+      if ['exit', 'quit','close'].include?(cmd)
         break
       elsif cmd.is_number?
         index = cmd.to_i
         if @items_list[index]
             purchase index
         else
-          puts "Nie ma produktu o numerze: \"#{cmd}\""
+          puts "Not item with the number: \"#{cmd}\""
         end
-      elsif cmd=='pomoc'
+      elsif cmd=='help'
         help
       elsif Coins.get_codes.has_value?(cmd)
         insert_money(cmd)
       elsif Commands.get_commands.key?(cmd)
         send Commands.get_commands[cmd].to_sym
       else
-        puts "Podana komenda nie istnieje"
+        puts "Entered command does not exist"
       end
     end
   end
@@ -173,7 +171,7 @@ def create_and_fill_machine
   machine.add_item('Pepsi', 1.50, 4)
   machine.add_money_to_the_machine(0.05, 5)
   machine.add_money_to_the_machine(0.10, 3)
-  machine.add_money_to_the_machine(0.20, 4)
+  machine.add_money_to_the_machine(0.50, 4)
   machine.add_money_to_the_machine(1.00, 2)
   machine
 end
